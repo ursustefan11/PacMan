@@ -18,7 +18,7 @@ for i in range(1, 5):
     player_images.append(pygame.transform.scale(
         pygame.image.load(f'assets/player_images/{i}.png'), (45, 45)))
 
-player_x = 430  # tut = 440
+player_x = 440
 player_y = 663
 direction = 0
 counter = 0
@@ -85,28 +85,52 @@ def draw_player():
 def check_position(center_x, center_y):
     turns = [False, False, False, False]
     num1 = (HEIGHT - 50) // 32
-    num2 = (WIDTH) // 30
+    num2 = (WIDTH) // 30 
     num3 = 15
     # check collisions based on center_x and center_y of player +/- fudge number
+    # check if center of player is within the board width()
     if center_x // 30 < 29:
+        # right // returns opposite=True
         if direction == 0:
             if level[center_y // num1][(center_x - num3) // num2] < 3:
                 turns[1] = True
+        # left // returns opposite=True
         if direction == 1:
             if level[center_y // num1][(center_x + num3) // num2] < 3:
-                turns[1] = True
+                turns[0] = True
+        # up // returns opposite=True
         if direction == 2:
             if level[(center_y + num3) // num1][center_x // num2] < 3:
                 turns[3] = True
+        # down // returns opposite=True
         if direction == 3:
             if level[(center_y - num3) // num1][center_x // num2] < 3:
                 turns[2] = True
 
         if direction == 2 or direction == 3:
             if 12 <= center_x % num2 <= 18:
-                pass
-            pass
-     else:
+                if level[(center_y + num3) // num1][center_x // num2] < 3:
+                    turns[3] = True
+                if level[(center_y - num3) // num1][center_x // num2] < 3:
+                    turns[2] = True
+            if 12 <= center_y % num1 <= 18:
+                if level[center_y // num1][(center_x - num2)// num2] < 3:
+                    turns[1] = True
+                if level[center_y // num1][(center_x + num2)// num2] < 3:
+                    turns[0] = True
+        
+        if direction == 0 or direction == 1:
+            if 12 <= center_x % num2 <= 18:
+                if level[(center_y + num1) // num1][center_x // num2] < 3:
+                    turns[3] = True
+                if level[(center_y - num1) // num1][center_x // num2] < 3:
+                    turns[2] = True
+            if 12 <= center_y % num1 <= 18:
+                if level[center_y // num1][(center_x - num3) // num2] < 3:
+                    turns[1] = True
+                if level[center_y // num1][(center_x + num3) // num2] < 3:
+                    turns[0] = True
+    else:
         turns[0] = True
         turns[1] = True
     

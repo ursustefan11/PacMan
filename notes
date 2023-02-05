@@ -1,0 +1,22 @@
+player_x = 440 (24)
+player_y = 663 (15)
+
+num1 = (HEIGHT - 50) // 32 = 28
+num2 = (WIDTH) // 30 = 30
+num3 = 15
+
+center_x = player_x + 23 = 463 (25)
+center_y = player_y + 24 = 687 (15)
+
+player_y // num1 = 663 // 28 = 24
+player_x // num2 = 440 // 30 = 15
+
+center_y // num1 = 687//28 = 25
+(center_x - num3) // num2 = (463 - 15) // 30 = 15
+
+Daca DREAPTA
+    Daca Tile < 3
+        Stanga
+Daca Stanga
+    Daca Tile < 3
+        Dreapta
