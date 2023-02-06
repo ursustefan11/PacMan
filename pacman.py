@@ -36,6 +36,12 @@ direction = 0
 counter = 0
 flicker = False
 score = 0
+powerup = False
+power_counter = 0
+eaten_ghost = [False, False, False, False]
+moving = False
+startup_counter = 0
+lives = 3
 
 
 # Draw the board. 32x32, Tile-based.
@@ -161,7 +167,7 @@ def move_player(move_x, move_y):
         move_y += player_speed
     return move_x, move_y
 
-def check_collisions(scor):
+def check_collisions(scor, power, power_count, eaten_ghosts):
     num1 = (HEIGHT - 50) // 32
     num2 = WIDTH // 30
     if 0 < player_x < 870:
@@ -171,12 +177,21 @@ def check_collisions(scor):
         if level[center_y // num1][center_x // num2] == 2:
             level[center_y // num1][center_x // num2] = 0
             scor += 50
-    return scor
+            power = True
+            power_count = 0
+            eaten_ghosts = [False, False, False, False]
+    return scor, power, power_count, eaten_ghosts
 
 
 def draw_misc():
     score_text = font.render(f'Score: {score}', True, 'white')
-    screen.blit(score_text, (10, 920))
+    #countdown_timer
+    screen.blit(score_text, (10, 915))
+    if powerup:
+        pygame.draw.circle(screen, 'blue', (148, 930), 15)
+    for i in range(lives):
+        screen.blit(pygame.transform.scale(player_images[0], (26, 26)), (650 + i * 40, 918))
+
 
 run = True
 while run:
@@ -185,10 +200,20 @@ while run:
         counter += 1
         if counter > 3:
             flicker = False
-    
     else:
         counter = 0
         flicker = True
+    if powerup and power_counter < 600:
+        power_counter += 1
+    elif powerup and power_counter >= 600:
+        power_counter = 0
+        powerup = False
+        eaten_ghost = [False, False, False, False]
+    if startup_counter < 180:
+        moving = False
+        startup_counter += 1
+    else:
+        moving = True
 
     screen.fill('black')
     draw_board()
@@ -197,13 +222,14 @@ while run:
     center_x = player_x + 23
     center_y = player_y + 24
     turns_allowed = check_position(center_x, center_y)
-    player_x, player_y = move_player(player_x, player_y)
-    score = check_collisions(score)
+    if moving:
+        player_x, player_y = move_player(player_x, player_y)
+
+    score, powerup, power_counter, eaten_ghost = check_collisions(score, powerup, power_counter, eaten_ghost)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-
         # If a key is pressed
         if event.type == pygame.KEYDOWN:
             # If a specific key is pressed
@@ -215,30 +241,22 @@ while run:
                 direction_command = 2
             if event.key == pygame.K_DOWN:
                 direction_command = 3
-        
-        # If a key a key is released
-        if event.type == pygame.KEYUP:
-            # If key is released keep going in the direction
-            if event.key == pygame.K_RIGHT and direction_command == 0:
-                direction_command = direction
-            if event.key == pygame.K_LEFT and direction_command == 1:
-                direction_command = direction
-            if event.key == pygame.K_UP and direction_command == 2:
-                direction_command = direction
-            if event.key == pygame.K_DOWN and direction_command == 3:
-                direction_command = direction
-        # If the for loop and the next if/elif statement is inside the `for event in pygame.event` loop, you'll have to spam the direction keys in order to change direction when is possible.
-        # If you outdent the for loop and if/elif statement, the player will change direction as soon as there is a position available.
-        # I think that the way that it works right now makes this more engaging.
-        for i in range(4):
-            # If moving in direction and next pos is available then keep moving
-            if direction_command == i and turns_allowed[i]:
-                direction = i
 
-        if player_x > 900:
-            player_x = -47
-        elif player_x < -50:
-            player_x = 897
+
+    # If moving in direction and next pos is available then keep moving
+    if direction_command == 0 and turns_allowed[0]:
+        direction = 0
+    if direction_command == 1 and turns_allowed[1]:
+        direction = 1
+    if direction_command == 2 and turns_allowed[2]:
+        direction = 2
+    if direction_command == 3 and turns_allowed[3]:
+        direction = 3
+
+    if player_x > 900:
+        player_x = -47
+    elif player_x < -50:
+        player_x = 897
 
     pygame.display.flip() # Updates to the visuals
 pygame.quit()
