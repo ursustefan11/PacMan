@@ -458,6 +458,73 @@ def move_player(move_x, move_y):
     return move_x, move_y
 
 
+# def get_targets(blink_x, blink_y, ink_x, ink_y, pink_x, pink_y, clyd_x, clyd_y):
+#     if player_x < 450:
+#         runaway_x = 900
+#     else:
+#         runaway_x = 0
+#     if player_y < 450:
+#         runaway_y = 900
+#     else:
+#         runaway_y = 0
+#     return_target = (380, 400)
+
+#     if powerup:
+#         if not blinky_dead:
+#             blink_target = (runaway_x, runaway_y)
+#         else:
+#             blink_target = return_target
+
+#         if not inky_dead:
+#             ink_target = (runaway_x, player_y)
+#         else:
+#             ink_target = return_target
+
+#         if not pinky_dead:
+#             pink_target = (player_x, runaway_y)
+#         else:
+#             pink_target = return_target
+
+#         if not clyde_dead:
+#             clyd_target = (450, 450)
+#         else:
+#             clyd_target = return_target
+#     else:
+#         if not blinky_dead:
+#             if 340 < blink_y < 560 and 560 < blink_y < 500:
+#                 blink_target = (400, 100)
+#             else:
+#                 blink_target = (player_x, player_y)
+#         else:
+#             blink_target = return_target
+
+#         if not inky_dead:
+#             if 340 < ink_y < 560 and 560 < ink_y < 500:
+#                 ink_target = (400, 100)
+#             else:
+#                 ink_target = (player_x, player_y)
+#         else:
+#             ink_target = return_target
+
+#         if not pinky_dead:
+#             if 340 < pink_y < 560 and 560 < pink_y < 500:
+#                 pink_target = (400, 100)
+#             else:
+#                 pink_target = (player_x, player_y)
+#         else:
+#             pink_target = return_target
+
+#         if not clyde_dead:
+#             if 340 < clyd_y < 560 and 560 < clyd_y < 500:
+#                 clyd_target = (400, 100)
+#             else:
+#                 clyd_target = (player_x, player_y)
+#         else:
+#             clyd_target = return_target
+    
+#     return target_list
+
+
 #Explaination here soon
 def check_collisions(scor, power, power_count, eaten_ghosts):
     num1 = (HEIGHT - 50) // 32
@@ -491,19 +558,20 @@ while run:
         power_counter = 0
         powerup = False
         eaten_ghost = [False, False, False, False]
-    # if startup_counter < 180:
-    #     moving = False
-    #     startup_counter += 1
-    # else:
-    #     moving = True
+    if startup_counter < 180:
+        moving = False
+        startup_counter += 1
+    else:
+        moving = True
 
     screen.fill('black')
     draw_board()
     draw_player()
     draw_misc()
+    # targets = get_targets(blinky_x, blinky_y, inky_x, inky_y, pinky_x, pinky_y, clyde_x, clyde_y)
     blinky = Ghost(blinky_x, blinky_y, targets[0], ghost_speed, blinky_img, blinky_direction, blinky_dead, blinky_box , 0)
-    pinky = Ghost(pinky_x, pinky_y, targets[1], ghost_speed, pinky_img, pinky_direction, pinky_dead, pinky_box, 1)
-    inky = Ghost(inky_x, inky_y, targets[2], ghost_speed, inky_img, inky_direction, inky_dead, inky_box , 2)
+    inky = Ghost(inky_x, inky_y, targets[2], ghost_speed, inky_img, inky_direction, inky_dead, inky_box , 1)
+    pinky = Ghost(pinky_x, pinky_y, targets[1], ghost_speed, pinky_img, pinky_direction, pinky_dead, pinky_box, 2)
     clyde = Ghost(clyde_x, clyde_y, targets[3], ghost_speed, clyde_img, clyde_direction, clyde_dead, clyde_box, 3)
     center_x = player_x + 23
     center_y = player_y + 24
@@ -531,8 +599,6 @@ while run:
                 direction_command = 2
             if event.key == pygame.K_DOWN:
                 direction_command = 3
-
-
     # If moving in direction and next pos is available then keep moving
     if direction_command == 0 and turns_allowed[0]:
         direction = 0
@@ -548,7 +614,5 @@ while run:
     elif player_x < -50:
         player_x = 897
 
-    pygame.display.flip() # Updates to the visuals
+    pygame.display.flip() # Refresh screen
 pygame.quit()
-
-#3:00:23
